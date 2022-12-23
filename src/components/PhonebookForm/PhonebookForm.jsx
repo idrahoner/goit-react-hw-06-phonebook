@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
-import { nanoid } from 'nanoid';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/actions';
+import { hasInclude } from 'utils';
 import css from './PhonebookForm.module.css';
 
-export default function PhonebookForm({ onSubmit }) {
+export default function PhonebookForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const handleChange = event => {
     const inputName = event.currentTarget.name;
@@ -23,7 +28,15 @@ export default function PhonebookForm({ onSubmit }) {
 
   const handleSubmit = event => {
     event.preventDefault();
-    onSubmit({ id: nanoid(), name, number });
+
+    const isAlreadyHave = hasInclude(name, number, contacts);
+
+    if (isAlreadyHave) {
+      return alert(isAlreadyHave + ' is already in contacts.');
+    }
+
+    dispatch(addContact(name, number));
+
     setName('');
     setNumber('');
   };
@@ -62,7 +75,3 @@ export default function PhonebookForm({ onSubmit }) {
     </form>
   );
 }
-
-PhonebookForm.propTypes = {
-  onSubmit: PropTypes.func,
-};
