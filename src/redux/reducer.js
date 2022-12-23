@@ -2,17 +2,24 @@
 
 import { addContact, removeContact, changeFilter } from './actions';
 
-const initialContacts = [];
+const initialContacts = { contactList: [] };
 const initialFilter = '';
 
 export const contactsReducer = (state = initialContacts, action) => {
   switch (action.type) {
     case addContact.type:
-      console.log(state);
-      return [...state, action.payload];
+      return {
+        ...state,
+        contactList: [...state.contactList, action.payload],
+      };
 
     case removeContact.type:
-      return state.filter(element => element.id !== action.payload);
+      return {
+        ...state,
+        contactList: state.contactList.filter(
+          element => element.id !== action.payload
+        ),
+      };
 
     default:
       return state;
